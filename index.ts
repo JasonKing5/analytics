@@ -104,6 +104,10 @@ async function getVisitorData(websiteId: string, retryCount = 1): Promise<any> {
   }
 }
 
+app.get('/api/health', async (req: express.Request, res: express.Response) => {
+  res.json({ status: 'ok' });
+});
+
 app.get('/api/visitors', async (req: express.Request, res: express.Response) => {
   const { website = 'codefe' } = req.query;
 
