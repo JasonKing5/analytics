@@ -6,6 +6,7 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors());
+app.use(express.json({ limit: '10mb' }));
 const port = 4001;
 
 // analytics 配置
@@ -123,6 +124,17 @@ app.get('/api/visitors', async (req: express.Request, res: express.Response) => 
     console.error('获取访客数据出错:', (err as Error).message);
     res.status(500).json({ error: 'Failed to fetch analytics data' });
   }
+});
+
+app.post('/api/download', (req: express.Request, res: express.Response) => {
+  const { data, filename = 'export.json' } = req.body;
+  if (!data) {
+    return res.status(400).json({ error: 'Missing "data" field in request body' });
+  }
+  const jsonStr = JSON.stringify(data, null, 2);
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.send(jsonStr);
 });
 
 app.listen(port, () => {
